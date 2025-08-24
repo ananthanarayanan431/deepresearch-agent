@@ -1,15 +1,17 @@
 [project]
-name = "deepresearch-agent"
-version = "0.1.0"
-description = "Add your description here"
+name = "deepresearch"
+version = "0.0.2"
+description = ""
+authors = [
+    {name = "ananthanarayanan-28",email = "anantha.narayanan@oraczen.ai"}
+]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<4.0"
 dependencies = [
     "langchain-community>=0.3.20",
     "langchain-core>=0.3.49",
     "langchain-groq>=0.2.1",
     "langchain-openai>=0.2.12",
-    "langchain-pinecone>=0.2.0",
     "langchain>=0.3.22",
     "langsmith>=0.2.2",
     "pinecone>=5.3.1",
@@ -62,6 +64,11 @@ dependencies = [
     "langchain-neo4j>=0.4.0",
     "tiktoken>=0.9.0",
     "deepeval>=2.9.6",
-    "ruff>=0.12.9",
-    "langfuse>=3.2.6",
+    "ruff (>=0.12.10,<0.13.0)",
+    "langgraph-cli[inmem] (>=0.3.8,<0.4.0)",
 ]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

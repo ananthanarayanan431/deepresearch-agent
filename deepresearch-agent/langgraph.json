@@ -1,0 +1,8 @@
+{
+    "dependencies": ["."],
+    "graphs": {
+      "agent": "./deepresearch/agents/scope/graph.py:scope_graph"
+    },
+    "env": ".env",
+    "image_distro": "wolfi"
+  }
