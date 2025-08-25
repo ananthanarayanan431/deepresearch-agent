@@ -8,6 +8,10 @@ class GraphNode(str, PyEnum):
     END = END
     CLARIFY_WITH_USER = "clarify_with_user"
     WRITE_RESEARCH_BRIEF = "write_research_brief"
+    LLM_CALL = "llm_call"
+    TOOL_NODE = "tool_node"
+    COMPRESS_RESEARCH = "compress_research"
+
 
 
 class ConfigClass(str, PyEnum):
@@ -17,6 +21,10 @@ class ConfigClass(str, PyEnum):
     RAW_NOTES = "raw_notes"
     NOTES = "notes"
     FINAL_REPORT = "final_report"
+    RESEARCHER_MESSAGES = "researcher_messages"
+    TOOL_CALL_INTERATIONS = "tool_call_iterations"
+    RESEARCH_TOPIC = "research_topic"
+    COMPRESSED_RESEARCH = "compressed_research"
 
 
 class OpikPrompts(PyEnum):
