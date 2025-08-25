@@ -13,7 +13,6 @@ class GraphNode(str, PyEnum):
     COMPRESS_RESEARCH = "compress_research"
 
 
-
 class ConfigClass(str, PyEnum):
     MESSAGES = "messages"
     RESEARCH_BRIEF = "research_brief"

@@ -1,5 +1,5 @@
 import operator
-from typing import Annotated, Optional, Sequence, List
+from typing import Annotated, List, Optional, Sequence
 
 from langchain_core.messages import BaseMessage
 from langgraph.graph import MessagesState, add_messages
@@ -15,6 +15,7 @@ class AgentState(MessagesState):
     raw_notes: Annotated[list[str], operator.add]
     notes: Annotated[list[str], operator.add]
     final_report: str
+
 
 class ResearcherState(MessagesState):
     researcher_messages: Annotated[Sequence[BaseMessage], add_messages]
