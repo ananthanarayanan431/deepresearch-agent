@@ -1,6 +1,7 @@
 from typing import Annotated, Literal
 
 from langchain_core.tools import InjectedToolArg, tool
+from pydantic import BaseModel, Field
 
 from deepresearch.agents.research.methods import (
     deduplicate_search_results,
@@ -65,3 +66,17 @@ def think_tool(reflection: str) -> str:
         Confirmation that reflection was recorded for decision-making
     """
     return f"Reflection recorded: {reflection}"
+
+@tool
+class ConductResearch(BaseModel):
+    """Tool for delegating a research task to a specialized sub-agent."""
+
+    research_topic: str = Field(
+        description="The topic to research. Should be a single topic, and should be described in high detail (at least a paragraph).",
+    )
+
+@tool
+class ResearchComplete(BaseModel):
+    """Tool for indicating that the research process is complete."""
+
+    pass 

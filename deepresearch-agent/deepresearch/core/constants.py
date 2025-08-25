@@ -11,6 +11,12 @@ class GraphNode(str, PyEnum):
     LLM_CALL = "llm_call"
     TOOL_NODE = "tool_node"
     COMPRESS_RESEARCH = "compress_research"
+    SUPERVISOR_TOOLS = "supervisor_tools"
+    SUPERVISOR = "supervisor"
+    RESEARCH_COMPLETE = "ResearchComplete"
+    CONDUCT_RESEARCH = "ConductResearch"
+    THINK_TOOL = "think_tool"
+    COMPRESSED_RESEARCH_GRAPH = "compressed_research"
 
 
 class ConfigClass(str, PyEnum):
@@ -24,6 +30,7 @@ class ConfigClass(str, PyEnum):
     TOOL_CALL_INTERATIONS = "tool_call_iterations"
     RESEARCH_TOPIC = "research_topic"
     COMPRESSED_RESEARCH = "compressed_research"
+    RESEARCH_ITERATIONS = "research_iterations"
 
 
 class OpikPrompts(PyEnum):
