@@ -17,6 +17,8 @@ class GraphNode(str, PyEnum):
     CONDUCT_RESEARCH = "ConductResearch"
     THINK_TOOL = "think_tool"
     COMPRESSED_RESEARCH_GRAPH = "compressed_research"
+    SUPERVISOR_SUBGRAPH = "supervisor_subgraph"
+    FINAL_REPORT_GENERATION = "final_report_generation"
 
 
 class ConfigClass(str, PyEnum):
