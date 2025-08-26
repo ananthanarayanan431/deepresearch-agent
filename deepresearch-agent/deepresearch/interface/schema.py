@@ -9,5 +9,6 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     thread_id: str
+    response: str  
     is_followup: bool = False  # indicates if model is asking for clarification
     report: Optional[str] = None
