@@ -23,6 +23,8 @@ class GraphNode(str, PyEnum):
 
 class ConfigClass(str, PyEnum):
     MESSAGES = "messages"
+    CONFIGURABLE = "configurable"
+    THREAD_ID = "thread_id"
     RESEARCH_BRIEF = "research_brief"
     SUPERVISOR_MESSAGES = "supervisor_messages"
     RAW_NOTES = "raw_notes"
