@@ -67,6 +67,7 @@ def think_tool(reflection: str) -> str:
     """
     return f"Reflection recorded: {reflection}"
 
+
 @tool
 class ConductResearch(BaseModel):
     """Tool for delegating a research task to a specialized sub-agent."""
@@ -75,8 +76,9 @@ class ConductResearch(BaseModel):
         description="The topic to research. Should be a single topic, and should be described in high detail (at least a paragraph).",
     )
 
+
 @tool
 class ResearchComplete(BaseModel):
     """Tool for indicating that the research process is complete."""
 
-    pass 
+    pass

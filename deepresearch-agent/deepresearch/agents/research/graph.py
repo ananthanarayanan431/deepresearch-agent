@@ -7,6 +7,7 @@ from langchain_core.messages import (
     filter_messages,
 )
 from langgraph.graph import StateGraph
+
 from deepresearch.config.llm import LlmService
 from deepresearch.core.constants import ConfigClass, GraphNode, OpikPrompts
 from deepresearch.core.opik_prompts import Opik_prompts
