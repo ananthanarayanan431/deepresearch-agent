@@ -3,6 +3,7 @@ from typing import Dict
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_core.messages import HumanMessage
+from langchain_core.messages import AIMessage
 from langgraph.checkpoint.memory import InMemorySaver
 
 from deepresearch.agents.writer.graph import deep_researcher_builder
@@ -76,17 +77,44 @@ async def chat_with_agent(request: ChatRequest) -> ChatResponse:
             },
         )
 
+        print(f"Processing message: {request.message}")  # Debug log
+        print(f"Using thread_id: {thread_id}")  # Debug log
+
         response = await full_agent.ainvoke(
             {ConfigClass.MESSAGES: [HumanMessage(content=request.message)]},
             config=thread,
         )
 
+        print(f"Agent response keys: {response.keys()}")  # Debug log
+
+        # Check if we have a final report (research complete)
         final_report = response.get("final_report")
-        response_text = response.get("response") or response.get(
-            "final_report", "Processing your request..."
-        )
+        
+        # Extract the latest AI message from the messages array
+        messages = response.get(ConfigClass.MESSAGES, [])
+        latest_ai_message = None
+        
+        # Find the last AI message in the conversation
+        for message in reversed(messages):
+            if isinstance(message, AIMessage):
+                latest_ai_message = message.content
+                break
+        
+        # Determine response text
+        if final_report:
+            # Research is complete, return the final report
+            response_text = final_report
+        elif latest_ai_message:
+            # Use the latest AI message content
+            response_text = latest_ai_message
+        else:
+            # Fallback
+            response_text = "I'm processing your request. Please wait..."
+
+        print(f"Final response text: {response_text[:100]}...")  # Debug log (first 100 chars)
 
         if final_report:
+            # Research complete - create new thread for next conversation
             new_thread_id = generate_session_id()
             threads[new_thread_id] = {
                 ConfigClass.CONFIGURABLE: {
@@ -101,14 +129,18 @@ async def chat_with_agent(request: ChatRequest) -> ChatResponse:
                 is_followup=False,
             )
         else:
-            # Clarification phase -> keep using same thread
+            # Clarification phase or intermediate step - keep using same thread
             threads[thread_id] = thread
             return ChatResponse(
-                thread_id=thread_id, response=response_text, is_followup=True
+                thread_id=thread_id, 
+                response=response_text, 
+                is_followup=True
             )
 
     except Exception as e:
-        print(f"Error in chat_with_agent: {str(e)}")  # Add logging
+        print(f"Error in chat_with_agent: {str(e)}")
+        import traceback
+        traceback.print_exc()  # Print full traceback for debugging
         raise HTTPException(status_code=500, detail=str(e))
 
 
