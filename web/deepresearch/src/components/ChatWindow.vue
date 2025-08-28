@@ -545,144 +545,442 @@ const exportAsPDF = async () => {
             font-size: 15px;
             line-height: 1.8;
           }
-                    h1, h2, h3 {
+          h1, h2, h3 {
             color: #1F2937;
             margin-top: 35px;
             margin-bottom: 20px;
             font-weight: 700;
           }
-          p {
-            margin: 10px 0;
+          h1 { 
+            font-size: 24px; 
+            border-bottom: 3px solid #E5E7EB; 
+            padding-bottom: 12px;
+            background: linear-gradient(135deg, #1F2937 0%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          }
+          h2 { 
+            font-size: 20px; 
             color: #374151;
+            border-left: 4px solid #3B82F6;
+            padding-left: 16px;
           }
-          pre {
-            background: #f3f4f6;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            font-size: 13px;
+          h3 { 
+            font-size: 18px; 
+            color: #4B5563;
           }
-          hr {
-            margin: 30px 0;
-            border: 0;
+          p {
+            margin-bottom: 18px;
+            text-align: justify;
+          }
+          ul, ol {
+            margin-bottom: 18px;
+            padding-left: 30px;
+          }
+          li {
+            margin-bottom: 8px;
+          }
+          strong {
+            color: #1F2937;
+            font-weight: 700;
+          }
+          em {
+            color: #4B5563;
+            font-style: italic;
+          }
+          .section-divider {
+            margin: 50px 0;
+            text-align: center;
+            position: relative;
+          }
+          .section-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
             height: 1px;
-            background: #e5e7eb;
+            background: linear-gradient(90deg, transparent, #D1D5DB, transparent);
+          }
+          .section-divider span {
+            background: white;
+            padding: 0 20px;
+            color: #9CA3AF;
+            font-size: 14px;
+            font-weight: 600;
+          }
+          .footer {
+            margin-top: 60px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            text-align: center;
+            border-top: 1px solid #E5E7EB;
+          }
+          .footer-content {
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 10px;
+          }
+          .footer-logo {
+            font-weight: 800;
+            color: #3B82F6;
+            font-size: 16px;
+          }
+          @media print {
+            body { margin: 0; padding: 20px; }
+            .header { break-after: avoid; }
+            .section-divider { break-inside: avoid; }
           }
         </style>
       </head>
       <body>
         <div class="header">
-          <h1>Complete Research Report</h1>
-          <p class="subtitle">Generated on ${timestamp}</p>
+          <h1>AI Research Report</h1>
+          <p class="subtitle">Comprehensive Analysis & Insights</p>
+          <p style="color: #6B7280; margin: 10px 0 0 0; font-size: 14px;">Generated on ${timestamp}</p>
           <div class="stats">
             <div class="stat-item">
-              <div class="stat-number">${messageStats.value.research}</div>
-              <div class="stat-label">Research Points</div>
+              <div class="stat-number">${props.messages.filter(m => m.sender === 'bot' && !m.isThinking).length}</div>
+              <div class="stat-label">Research Sections</div>
             </div>
             <div class="stat-item">
-              <div class="stat-number">${getTotalWords()}</div>
-              <div class="stat-label">Words</div>
+              <div class="stat-number">${getTotalWords().toLocaleString()}</div>
+              <div class="stat-label">Total Words</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">${Math.ceil(getTotalWords() / 200)}</div>
+              <div class="stat-label">Reading Time (min)</div>
             </div>
           </div>
         </div>
         <div class="content">
-          ${researchContent.replace(/\n/g, '<br/>')}
+          ${researchContent.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                          .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                          .replace(/^### (.+$)/gm, '<h3>$1</h3>')
+                          .replace(/^## (.+$)/gm, '<h2>$1</h2>')
+                          .replace(/^# (.+$)/gm, '<h1>$1</h1>')
+                          .replace(/\n---\n/g, '<div class="section-divider"><span>Research Section</span></div>')
+                          .replace(/\n\n/g, '</p><p>')
+                          .replace(/\n/g, '<br>')
+                          .replace(/^(.+)/, '<p>$1')
+                          .replace(/(.+)$/, '$1</p>')
+                          .replace(/<p><\/p>/g, '')
+                          .replace(/<p><br><\/p>/g, '')}
+        </div>
+        <div class="footer">
+          <div class="footer-content">
+            This comprehensive research report was generated using advanced AI analysis
+          </div>
+          <div class="footer-logo">AI Research Assistant</div>
         </div>
       </body>
       </html>
     `
+    
     printWindow.document.write(htmlContent)
     printWindow.document.close()
-    printWindow.focus()
-    printWindow.print()
+    
+    printWindow.onload = () => {
+      setTimeout(() => {
+        printWindow.print()
+        printWindow.close()
+      }, 500)
+    }
+    
+    showExportMenu.value = false
   } catch (error) {
-    console.error('PDF export failed:', error)
-    alert('Failed to export PDF. Check console for details.')
+    console.error('Error generating PDF:', error)
+    alert('Error generating PDF. Please try again.')
   }
 }
 
 const exportAsText = () => {
   try {
-    const content = props.messages
-      .map(m => `${m.sender.toUpperCase()}: ${m.text || ''}`)
-      .join('\n\n')
+    const timestamp = new Date().toLocaleString()
+    const content = `AI RESEARCH REPORT
+Generated: ${timestamp}
+${'='.repeat(50)}
+
+${props.messages
+  .filter(m => m.sender === 'user' || (m.sender === 'bot' && !m.isThinking))
+  .map(m => {
+    const sender = m.sender === 'user' ? 'QUERY' : 'RESEARCH FINDINGS'
+    return `${sender}:\n${m.text}\n${'—'.repeat(30)}\n`
+  }).join('\n')}
+
+Report Statistics:
+- Total Sections: ${props.messages.filter(m => m.sender === 'bot' && !m.isThinking).length}
+- Total Words: ${getTotalWords().toLocaleString()}
+- Estimated Reading Time: ${Math.ceil(getTotalWords() / 200)} minutes
+
+Generated by AI Research Assistant`
+
     const blob = new Blob([content], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.download = 'research-session.txt'
+    link.href = url
+    link.download = `research-report-${Date.now()}.txt`
     link.click()
+    URL.revokeObjectURL(url)
+    
+    showExportMenu.value = false
   } catch (error) {
-    console.error('Text export failed:', error)
-    alert('Failed to export as text.')
+    console.error('Error exporting as text:', error)
+    alert('Error exporting file. Please try again.')
   }
 }
 
 const exportAsMarkdown = () => {
   try {
-    const content = props.messages
-      .map(m => (m.sender === 'user' ? `**User:** ${m.text}` : `**Assistant:** ${m.text}`))
-      .join('\n\n---\n\n')
+    const timestamp = new Date().toLocaleString()
+    const content = `# AI Research Report
+
+**Generated:** ${timestamp}
+
+---
+
+${props.messages
+  .filter(m => m.sender === 'user' || (m.sender === 'bot' && !m.isThinking))
+  .map(m => {
+    if (m.sender === 'user') {
+      return `## Research Query\n\n${m.text}\n`
+    } else {
+      return `## Research Findings\n\n${m.text}\n`
+    }
+  }).join('\n---\n\n')}
+
+---
+
+## Report Statistics
+
+- **Total Sections:** ${props.messages.filter(m => m.sender === 'bot' && !m.isThinking).length}
+- **Total Words:** ${getTotalWords().toLocaleString()}
+- **Estimated Reading Time:** ${Math.ceil(getTotalWords() / 200)} minutes
+
+---
+
+*Generated by AI Research Assistant*`
+
     const blob = new Blob([content], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.download = 'research-session.md'
+    link.href = url
+    link.download = `research-report-${Date.now()}.md`
     link.click()
+    URL.revokeObjectURL(url)
+    
+    showExportMenu.value = false
   } catch (error) {
-    console.error('Markdown export failed:', error)
-    alert('Failed to export as markdown.')
+    console.error('Error exporting as markdown:', error)
+    alert('Error exporting file. Please try again.')
   }
 }
 
-// Scroll automatically when messages change
-watch(
-  () => props.messages.length,
-  () => {
-    scrollToBottom(false)
-  }
-)
-
-// Handle loading animation progress
-let loadingInterval = null
-watch(
-  () => props.isLoading,
-  (newVal) => {
-    if (newVal) {
+// Loading simulation
+const simulateLoadingProgress = () => {
+  if (!props.isLoading) return
+  
+  const interval = setInterval(() => {
+    if (!props.isLoading) {
+      clearInterval(interval)
       loadingProgress.value = 0
-      currentLoadingTextIndex.value = 0
       currentStepIndex.value = 0
-      researchSteps.value.forEach((step, i) => {
+      currentLoadingTextIndex.value = 0
+      researchSteps.value.forEach(step => {
         step.completed = false
-        step.active = i === 0
+        step.active = false
       })
-
-      loadingInterval = setInterval(() => {
-        if (loadingProgress.value < 100) {
-          loadingProgress.value += 5
-          if (loadingProgress.value % 20 === 0 && currentStepIndex.value < researchSteps.value.length - 1) {
-            researchSteps.value[currentStepIndex.value].completed = true
-            researchSteps.value[currentStepIndex.value].active = false
-            currentStepIndex.value++
-            researchSteps.value[currentStepIndex.value].active = true
-          }
-          currentLoadingTextIndex.value = Math.min(
-            Math.floor((loadingProgress.value / 100) * loadingTexts.length),
-            loadingTexts.length - 1
-          )
-        } else {
-          clearInterval(loadingInterval)
-        }
-      }, 500)
-    } else if (loadingInterval) {
-      clearInterval(loadingInterval)
+      researchSteps.value[0].active = true
+      return
     }
+    
+    // Update progress
+    if (loadingProgress.value < 95) {
+      const increment = Math.random() * 8 + 3
+      loadingProgress.value = Math.min(95, loadingProgress.value + increment)
+    }
+    
+    // Update steps
+    const progressPerStep = 100 / researchSteps.value.length
+    const targetStep = Math.floor(loadingProgress.value / progressPerStep)
+    
+    if (targetStep !== currentStepIndex.value && targetStep < researchSteps.value.length) {
+      if (currentStepIndex.value < researchSteps.value.length) {
+        researchSteps.value[currentStepIndex.value].completed = true
+        researchSteps.value[currentStepIndex.value].active = false
+      }
+      
+      currentStepIndex.value = targetStep
+      if (currentStepIndex.value < researchSteps.value.length) {
+        researchSteps.value[currentStepIndex.value].active = true
+      }
+    }
+    
+    // Update loading text
+    const textIndex = Math.floor(loadingProgress.value / 16.67) // Change text every ~17% progress
+    if (textIndex !== currentLoadingTextIndex.value && textIndex < loadingTexts.length) {
+      currentLoadingTextIndex.value = textIndex
+    }
+  }, 1200)
+}
+
+// Click outside to hide export menu
+const handleClickOutside = (event) => {
+  if (!event.target.closest('.relative')) {
+    showExportMenu.value = false
   }
-)
+}
+
+// Lifecycle
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
 
 onUnmounted(() => {
-  if (loadingInterval) clearInterval(loadingInterval)
+  document.removeEventListener('click', handleClickOutside)
 })
 
-onMounted(() => {
-  scrollToBottom(false)
+// Watchers
+watch(() => props.messages.length, () => {
+  scrollToBottom()
+})
+
+watch(() => props.isLoading, (newVal) => {
+  if (newVal) {
+    loadingProgress.value = 5
+    simulateLoadingProgress()
+  }
+  scrollToBottom()
 })
 </script>
+
+<style scoped>
+/* Enhanced gradient text support */
+.bg-clip-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Advanced animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes float-1 {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  25% { transform: translateY(-10px) translateX(5px); }
+  50% { transform: translateY(0px) translateX(10px); }
+  75% { transform: translateY(10px) translateX(5px); }
+}
+
+@keyframes float-2 {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  25% { transform: translateY(8px) translateX(-3px); }
+  50% { transform: translateY(-5px) translateX(-8px); }
+  75% { transform: translateY(-12px) translateX(-3px); }
+}
+
+@keyframes float-3 {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  33% { transform: translateY(-8px) translateX(8px); }
+  66% { transform: translateY(8px) translateX(-8px); }
+}
+
+.animate-float-1 {
+  animation: float-1 6s ease-in-out infinite;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.animate-float-2 {
+  animation: float-2 8s ease-in-out infinite;
+  position: absolute;
+  top: 60px;
+  right: 30px;
+}
+
+.animate-float-3 {
+  animation: float-3 10s ease-in-out infinite;
+  position: absolute;
+  bottom: 30px;
+  left: 50px;
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom scrollbar */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+  border-radius: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+}
+
+/* Smooth scrolling */
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced hover effects */
+.transform {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+}
+
+.hover\:scale-110:hover {
+  transform: scale(1.1);
+}
+
+/* Enhanced shadow utilities */
+.shadow-3xl {
+  box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Modal backdrop blur */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+.backdrop-blur-lg {
+  backdrop-filter: blur(16px);
+}
+
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+}
+</style>
