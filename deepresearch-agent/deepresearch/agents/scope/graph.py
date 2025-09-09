@@ -7,15 +7,17 @@ from langgraph.graph import StateGraph
 from langgraph.types import Command
 
 from deepresearch.config.llm import LlmService
-from deepresearch.core.constants import ConfigClass, GraphNode, OpikPrompts
+from deepresearch.core.constants import ConfigClass, GraphNode
+from deepresearch.core.constants import StartEvaluationOpikPrompt
 from deepresearch.core.model import ClarifyWithUser, ResearchQuestion
 from deepresearch.core.opik_prompts import Opik_prompts
 from deepresearch.core.state import AgentInputState, AgentState
 from deepresearch.tools.utils import get_today_str
 
+from deepresearch.config.gemini_models import GeminiModel
 load_dotenv()
 
-llm = LlmService.get_model(model_name="gpt-4.1")
+llm = LlmService.get_gemini_model(model_name=GeminiModel.GEMINI_2_5_FLASH)
 logger = logging.getLogger(__name__)
 
 
@@ -24,7 +26,7 @@ def clarify_with_user(state: AgentState) -> Command[GraphNode]:
 
     structured_model = llm.with_structured_output(ClarifyWithUser)
     template = Opik_prompts.get_prompt(
-        prompt_name=OpikPrompts.CLARIFY_WITH_USER_INSTRUCTIONS
+        prompt_name=StartEvaluationOpikPrompt.STARTUP_CLARIFY_WITH_USER_INSTRUCTIONS
     )
     prompt = template.format(
         messages=get_buffer_string(state[ConfigClass.MESSAGES]),
@@ -51,7 +53,7 @@ def write_research_brief(state: AgentState) -> AgentState:
 
     structured_output_model = llm.with_structured_output(ResearchQuestion)
     prompt = Opik_prompts.get_prompt(
-        prompt_name=OpikPrompts.TRANSFORM_MESSAGES_INTO_RESEARCH_TOPIC_PROMPT
+        prompt_name=StartEvaluationOpikPrompt.STARTUP_TRANSFORM_MESSAGES_PROMPT
     )
     template = prompt.format(
         messages=get_buffer_string(state[ConfigClass.MESSAGES]),

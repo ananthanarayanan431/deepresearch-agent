@@ -49,3 +49,14 @@ class OpikPrompts(PyEnum):
     COMPRESS_RESEACH_SYSTEM_PROMPT = "compress_research_system_prompt"
     COMPRESS_RESEACH_HUMAN_MESSAGE = "compress_research_human_message"
     FINAL_REPORT_GENERTATION_PROMPT = "final_report_generation_prompt"
+
+class StartEvaluationOpikPrompt(PyEnum):
+    STARTUP_CLARIFY_WITH_USER_INSTRUCTIONS = "startup_clarify_with_user_instructions"
+    STARTUP_TRANSFORM_MESSAGES_PROMPT = "startup_transform_messages_prompt"
+    STARTUP_RESEARCH_AGENT_PROMPT = "startup_research_agent_prompt"
+    STARTUP_SUMMARIZE_WEBPAGE_PROMPT = "startup_summarize_webpage_prompt"
+    STARTUP_RESEARCH_AGENT_PROMPT_WITH_MCP = "startup_research_agent_prompt_with_mcp" 
+    STARTUP_LEAD_RESEARCHER_PROMPT = "startup_lead_researcher_prompt"
+    STARTUP_COMPRESS_RESEARCH_SYSTEM_PROMPT = "startup_compress_research_system_prompt"
+    STARTUP_COMPRESS_RESEARCH_HUMAN_MESSAGE = "startup_compress_research_human_message"
+    STARTUP_FINAL_REPORT_GENERATION_PROMPT = "startup_final_report_generation_prompt"

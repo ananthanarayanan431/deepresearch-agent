@@ -33,12 +33,12 @@ class LlmService:
             
             
     @classmethod
-    def get_gemini_model(cls):
+    def get_gemini_model(cls,model_name:str = "gemini-2.5-flash"):
         if not GOOGLE_API_KEY:
             raise ValueError('GOOGLE API KEY is not Set!')
         
         try:
-            llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.5)
+            llm = ChatGoogleGenerativeAI(model=model_name, temperature=0.5)
             return llm
         
         except Exception as Error:

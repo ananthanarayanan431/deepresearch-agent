@@ -1,12 +1,14 @@
 from langchain_core.messages import HumanMessage
 
 from deepresearch.config.llm import LlmService
-from deepresearch.core.constants import OpikPrompts
+from deepresearch.core.constants import StartEvaluationOpikPrompt
 from deepresearch.core.model import Summary
 from deepresearch.core.opik_prompts import Opik_prompts
 from deepresearch.tools.utils import get_today_str
 
-summarization_model = LlmService.get_model(model_name="gpt-4o-mini")
+from deepresearch.config.gemini_models import GeminiModel
+
+summarization_model = LlmService.get_gemini_model(model_name=GeminiModel.GEMINI_2_5_FLASH)
 
 
 def summarize_webpage_content(webpage_content: str) -> str:
@@ -15,7 +17,7 @@ def summarize_webpage_content(webpage_content: str) -> str:
     try:
         structured_model = summarization_model.with_structured_output(Summary)
         prompt = Opik_prompts.get_prompt(
-            prompt_name=OpikPrompts.SUMMARIZE_WEBPAGE_PROMPT
+            prompt_name=StartEvaluationOpikPrompt.STARTUP_SUMMARIZE_WEBPAGE_PROMPT
         )
         template = prompt.format(webpage_content=webpage_content, date=get_today_str())
 
