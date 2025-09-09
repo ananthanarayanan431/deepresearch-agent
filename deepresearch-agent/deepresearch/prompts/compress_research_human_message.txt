@@ -1,0 +1,15 @@
+All above messages are about research conducted by an AI Researcher for the following research topic:
+
+RESEARCH TOPIC: {research_topic}
+
+Your task is to clean up these research findings while preserving ALL information that is relevant to answering this specific research question. 
+
+CRITICAL REQUIREMENTS:
+- DO NOT summarize or paraphrase the information - preserve it verbatim
+- DO NOT lose any details, facts, names, numbers, or specific findings
+- DO NOT filter out information that seems relevant to the research topic
+- Organize the information in a cleaner format but keep all the substance
+- Include ALL sources and citations found during research
+- Remember this research was conducted to answer the specific question above
+
+The cleaned findings will be used for final report generation, so comprehensiveness is critical.
