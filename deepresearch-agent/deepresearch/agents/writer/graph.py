@@ -4,15 +4,14 @@ from langgraph.graph import StateGraph
 from deepresearch.agents.scope.graph import clarify_with_user, write_research_brief
 from deepresearch.agents.supervisor.graph import supervisor_agent
 from deepresearch.config.llm import LlmService
-from deepresearch.core.constants import ConfigClass, GraphNode
-from deepresearch.core.constants import StartEvaluationOpikPrompt
+from deepresearch.core.constants import ConfigClass, GraphNode, OpikPrompts
 from deepresearch.core.opik_prompts import Opik_prompts
 from deepresearch.core.state import AgentInputState, AgentState
 from deepresearch.tools.utils import get_today_str
 
 from deepresearch.config.gemini_models import GeminiModel
 
-writer_model = LlmService.get_gemini_model(model_name=GeminiModel.GEMINI_2_5_FLASH)
+writer_model = LlmService.get_model()
 
 
 async def final_report_generation(state: AgentState):
@@ -22,7 +21,7 @@ async def final_report_generation(state: AgentState):
     findings = "\n".join(notes)
 
     final_report_generation_prompt = Opik_prompts.get_prompt(
-        prompt_name=StartEvaluationOpikPrompt.STARTUP_FINAL_REPORT_GENERATION_PROMPT
+        prompt_name=OpikPrompts.FINAL_REPORT_GENERTATION_PROMPT
     )
 
     final_report_prompt = final_report_generation_prompt.format(

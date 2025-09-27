@@ -66,6 +66,8 @@ dependencies = [
     "deepeval>=2.9.6",
     "ruff (>=0.12.10,<0.13.0)",
     "langgraph-cli[inmem] (>=0.3.8,<0.4.0)",
+    "perplexity-client (>=0.1.1,<0.2.0)",
+    "perplexityai (>=0.12.0,<0.13.0)",
 ]
 
 

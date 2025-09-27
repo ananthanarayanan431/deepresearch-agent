@@ -6304,6 +6304,44 @@ docs = ["sphinx", "sphinx-argparse"]
 image = ["Pillow"]
 
 [[package]]
+name = "perplexity-client"
+version = "0.1.1"
+description = "Unofficial Perplexity.ai API Client"
+optional = false
+python-versions = ">=3.10,<4.0"
+groups = ["main"]
+files = [
+    {file = "perplexity_client-0.1.1-py3-none-any.whl", hash = "sha256:b7d23bf6fd8f158925e8338f553fd2fb608de2f930eaa2b50189e97a78a7af46"},
+    {file = "perplexity_client-0.1.1.tar.gz", hash = "sha256:13a34be6f0c8cc03028b1821cf4ee6b17d6c48e1375bceb3a1250efdb2e4dacb"},
+]
+
+[package.dependencies]
+requests = ">=2.31.0,<3.0.0"
+
+[[package]]
+name = "perplexityai"
+version = "0.12.0"
+description = "The official Python library for the perplexity API"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "perplexityai-0.12.0-py3-none-any.whl", hash = "sha256:b06007b5807b4deb814ecc4b609a466f6ce0e7f7463a61bb186ee1c2b1e0f887"},
+    {file = "perplexityai-0.12.0.tar.gz", hash = "sha256:9dfbf72e4a73ceffc783e7ddea4c96835e3cfda89b118e77b8aa65ca8bb77e31"},
+]
+
+[package.dependencies]
+anyio = ">=3.5.0,<5"
+distro = ">=1.7.0,<2"
+httpx = ">=0.23.0,<1"
+pydantic = ">=1.9.0,<3"
+sniffio = "*"
+typing-extensions = ">=4.10,<5"
+
+[package.extras]
+aiohttp = ["aiohttp", "httpx-aiohttp (>=0.1.8)"]
+
+[[package]]
 name = "pillow"
 version = "11.3.0"
 description = "Python Imaging Library (Fork)"
@@ -10879,4 +10917,4 @@ cffi = ["cffi (>=1.17) ; python_version >= \"3.13\" and platform_python_implemen
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4.0"
-content-hash = "f3a37ca4a4837cc8eaa301be04dfab139a325a04a6ff690e63523048e8153c96"
+content-hash = "79231a9772833e716a9564f0eba4604ea4af2fd03bd835a51db5555091d29856"

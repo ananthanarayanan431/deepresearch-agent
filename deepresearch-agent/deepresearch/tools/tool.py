@@ -9,6 +9,7 @@ from deepresearch.agents.research.methods import (
     process_search_results,
 )
 from deepresearch.tools.tavilyapi import tavily_search_multiple
+from deepresearch.tools.pplxapi import perplexity_client, perplexity_search_multiple
 
 
 @tool(parse_docstring=True)
@@ -82,3 +83,35 @@ class ResearchComplete(BaseModel):
     """Tool for indicating that the research process is complete."""
 
     pass
+
+
+@tool
+def perplexity_search(
+    query: str,
+    max_results: Annotated[int, InjectedToolArg] = 3,
+    search_mode: Annotated[
+        Literal["web", "academic"], InjectedToolArg
+    ] = "web",
+    search_recency_filter: Annotated[
+        Literal["day", "month"], InjectedToolArg
+    ] = "month",
+):
+    """Searches the web content based on a given query and Fetch results. 
+    from Perplexity Search API with Content Summarization
+    
+    Args:
+        query (str): The search query.
+        max_results (int): Maximum number of results to fetch.
+        search_mode (str): Search mode ('web' or 'academic').
+        search_recency_filter (str): Recency filter ('day' or 'month').
+
+    Returns:
+        List of search results.
+    """
+    
+    search_results = perplexity_search_multiple(
+        [query], max_results, search_mode, search_recency_filter
+    )
+    
+    unique_results = ""
+    return search_results

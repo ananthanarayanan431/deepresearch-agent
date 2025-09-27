@@ -47,3 +47,7 @@ def format_search_output(summarized_results: dict) -> str:
         formatted_output += "-" * 80 + "\n"
 
     return formatted_output
+
+
+def perplexity_deduplicate_search_result():
+    pass 

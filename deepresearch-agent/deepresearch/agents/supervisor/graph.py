@@ -13,8 +13,7 @@ from langgraph.types import Command
 
 from deepresearch.agents.research.graph import research_agent
 from deepresearch.config.llm import LlmService
-from deepresearch.core.constants import ConfigClass, GraphNode
-from deepresearch.core.constants import StartEvaluationOpikPrompt
+from deepresearch.core.constants import ConfigClass, GraphNode, OpikPrompts
 from deepresearch.core.opik_prompts import Opik_prompts
 from deepresearch.core.state import SupervisorState
 from deepresearch.tools.tool import ConductResearch, ResearchComplete, think_tool
@@ -38,7 +37,7 @@ def get_notes_from_tool_calls(messages: list[BaseMessage]) -> list[str]:
 
 
 supervisor_tool = [think_tool, ConductResearch, ResearchComplete]
-supervisor_model = LlmService.get_gemini_model(model_name=GeminiModel.GEMINI_2_5_FLASH)
+supervisor_model = LlmService.get_model()
 supervisor_model_with_tools = supervisor_model.bind_tools(tools=supervisor_tool)
 
 max_researcher_iteration = 6
@@ -51,7 +50,7 @@ async def supervisor(
     supervisor_messages = state.get(ConfigClass.SUPERVISOR_MESSAGES, [])
 
     lead_researcher_prompt = Opik_prompts.get_prompt(
-        prompt_name=StartEvaluationOpikPrompt.STARTUP_LEAD_RESEARCHER_PROMPT
+        prompt_name=OpikPrompts.LEAD_RESEARCHER_PROMPT
     )
     system_messages = lead_researcher_prompt.format(
         date=get_today_str(),

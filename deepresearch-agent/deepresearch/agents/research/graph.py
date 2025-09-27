@@ -9,7 +9,7 @@ from langchain_core.messages import (
 from langgraph.graph import StateGraph
 
 from deepresearch.config.llm import LlmService
-from deepresearch.core.constants import ConfigClass, GraphNode, StartEvaluationOpikPrompt
+from deepresearch.core.constants import ConfigClass, GraphNode, OpikPrompts
 from deepresearch.core.opik_prompts import Opik_prompts
 from deepresearch.core.state import ResearcherOutputState, ResearcherState
 from deepresearch.tools.tool import tavily_search, think_tool
@@ -20,18 +20,18 @@ from deepresearch.config.gemini_models import GeminiModel
 tools = [tavily_search, think_tool]
 tools_by_name = {tool.name: tool for tool in tools}
 
-model = LlmService.get_gemini_model(model_name=GeminiModel.GEMINI_2_5_FLASH)
+model = LlmService.get_model()
 model_with_tools = model.bind_tools(tools)
 
-summarization_model = LlmService.get_gemini_model(model_name=GeminiModel.GEMINI_2_5_FLASH)
-compress_model = LlmService.get_gemini_model(model_name=GeminiModel.GEMINI_2_5_FLASH)
+summarization_model = LlmService.get_model()
+compress_model = LlmService.get_model()
 
 
 def llm_call(state: ResearcherState):
     """Analyze the current state and determine the next step"""
 
     research_agent_prompt = Opik_prompts.get_prompt(
-        prompt_name=StartEvaluationOpikPrompt.STARTUP_RESEARCH_AGENT_PROMPT
+        prompt_name=OpikPrompts.RESEARCH_AGENT_PROMPT
     )
 
     response = model_with_tools.invoke(
@@ -61,10 +61,10 @@ def tool_node(state: ResearcherState):
 
 def compress_research(state: ResearcherState):
     prompt = Opik_prompts.get_prompt(
-        prompt_name=StartEvaluationOpikPrompt.STARTUP_COMPRESS_RESEARCH_SYSTEM_PROMPT
+        prompt_name=OpikPrompts.COMPRESS_RESEACH_SYSTEM_PROMPT
     )
     compress_research_human_prompt = Opik_prompts.get_prompt(
-        prompt_name=StartEvaluationOpikPrompt.STARTUP_COMPRESS_RESEARCH_HUMAN_MESSAGE
+        prompt_name=OpikPrompts.COMPRESS_RESEACH_HUMAN_MESSAGE
     )
     compress_research_system_prompt = prompt.format(date=get_today_str())
     messages = (
