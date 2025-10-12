@@ -75,6 +75,38 @@ async def supervisor(
 async def supervisor_tools(
     state: SupervisorState,
 ) -> Command[Literal[GraphNode.SUPERVISOR, GraphNode.END]]:
+    """Process tool calls from the supervisor LLM with optimized execution patterns.
+    
+    This function handles two types of tool calls differently based on their characteristics:
+    
+    1. **think_tool (Sequential Execution)**:
+       - Processed using a simple for loop (synchronous, sequential)
+       - Rationale: think_tool is a lightweight, instant operation that simply records
+         reflections without any I/O operations or external API calls. It returns
+         immediately with a confirmation message.
+       - Impact: No performance benefit from parallelization; sequential processing
+         keeps code simple and execution order predictable.
+    
+    2. **conduct_research (Concurrent Execution)**:
+       - Processed using asyncio.gather() for parallel execution
+       - Rationale: Each conduct_research call spawns an independent research_agent
+         sub-graph that performs multiple web searches, LLM calls, and data processing.
+         These are I/O-bound operations that can take several seconds to minutes.
+       - Impact: Massive performance improvement - multiple research tasks execute
+         simultaneously instead of waiting for each to complete sequentially.
+         For example, 3 research tasks might complete in 30 seconds concurrently
+         vs 90 seconds sequentially.
+    
+    This dual approach optimizes performance by:
+    - Avoiding unnecessary overhead for lightweight operations (think_tool)
+    - Maximizing throughput for expensive I/O-bound operations (conduct_research)
+    
+    Args:
+        state: Current supervisor state containing messages and iteration count
+        
+    Returns:
+        Command directing to either SUPERVISOR for next iteration or END to complete
+    """
     supervisor_messages = state.get(ConfigClass.SUPERVISOR_MESSAGES, [])
     research_iteration = state.get(ConfigClass.RESEARCH_ITERATIONS, 0)
     most_recent_message = supervisor_messages[-1]
@@ -97,6 +129,7 @@ async def supervisor_tools(
 
     else:
         try:
+            # Separate tool calls by type for optimized processing
             think_tools_call = [
                 tool_call
                 for tool_call in most_recent_message.tool_calls
@@ -109,6 +142,11 @@ async def supervisor_tools(
                 if tool_call["name"] == GraphNode.CONDUCT_RESEARCH
             ]
 
+            # Process think_tool calls sequentially (for loop)
+            # Why for loop? think_tool is a lightweight synchronous operation that
+            # simply records a reflection string and returns instantly. No I/O,
+            # no external calls, no benefit from parallelization. Sequential
+            # execution is simpler and maintains predictable order.
             for tool_call in think_tools_call:
                 observation = think_tool.invoke(tool_call["args"])
                 tool_messages.append(
@@ -119,6 +157,13 @@ async def supervisor_tools(
                     )
                 )
 
+            # Process conduct_research calls concurrently (asyncio.gather)
+            # Why asyncio.gather? Each conduct_research call invokes a full research
+            # agent sub-graph that performs multiple web searches, LLM inference calls,
+            # and content processing - operations that can take 10-60+ seconds each.
+            # These are I/O-bound operations where threads/coroutines spend most time
+            # waiting for external responses. Running them concurrently provides
+            # massive performance gains (e.g., 3 tasks in 30s vs 90s sequentially).
             if conduct_research_calls:
                 coros = [
                     research_agent.ainvoke(
